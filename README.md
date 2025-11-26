@@ -1,30 +1,115 @@
-# Sistema de Pedidos - Los Trigales
+# 🍞 Los Trigales - Sistema de Gestión de Pedidos
 
-Bienvenido al repositorio del sistema de gestión de pedidos para la panadería "Los Trigales".
+## 🌐 Aplicación en Producción
+**URL**: https://inventario-insumos-trigales.web.app
 
-## Descripción
-Esta aplicación web permite gestionar el ciclo completo de pedidos, desde la toma del pedido hasta su entrega, incluyendo la administración de productos y clientes. Está construida con tecnologías modernas para asegurar rapidez y facilidad de uso.
+## 📋 Resumen del Proyecto
 
-## Tecnologías Utilizadas
-- **Frontend**: React (Javascript) + Vite
-- **Estilos**: Tailwind CSS
-- **Base de Datos**: Firebase (Próximamente)
+Sistema web completo para gestión de pedidos de panadería con:
+- ✅ Autenticación segura (Google + Email/Contraseña)
+- ✅ Control de acceso basado en roles (Admin, Gerente, Sucursal, Cliente)
+- ✅ Gestión de productos con importación desde Google Sheets
+- ✅ Gestión de pedidos con estados y seguimiento
+- ✅ Sincronización automática con Google Sheets
+- ✅ Base de datos en tiempo real (Firebase Firestore)
 
-## Cómo iniciar el proyecto
+## 🚀 Tecnologías Utilizadas
 
-1.  **Instalar dependencias**:
-    ```bash
-    npm install
-    ```
+- **Frontend**: React + Vite + Tailwind CSS v4
+- **Backend**: Firebase (Firestore + Authentication + Hosting)
+- **Integración**: Google Apps Script (Sheets)
+- **Control de versiones**: Git + GitHub
 
-2.  **Correr el servidor de desarrollo**:
-    ```bash
-    npm run dev
-    ```
+## 👥 Usuarios y Roles
 
-3.  Abrir el navegador en la dirección que muestra la terminal (usualmente `http://localhost:5173`).
+### Administrador
+- Email configurado: `neptuso@gmail.com`
+- Acceso total al sistema
+- Puede gestionar usuarios, productos y pedidos
 
-## Estructura del Proyecto
-- `/src`: Código fuente de la aplicación.
-- `/public`: Archivos estáticos.
-- `PLAN_DE_IMPLEMENTACION.md`: Hoja de ruta del desarrollo.
+### Otros Roles
+- **Gerente**: Gestión de productos y visualización de todos los pedidos
+- **Sucursal**: Gestión de pedidos de su zona
+- **Cliente**: Creación de pedidos y visualización de su historial
+
+## 📦 Funcionalidades Principales
+
+### 1. Gestión de Usuarios
+- Panel de administración de usuarios
+- Asignación y cambio de roles
+- Visualización de perfiles
+
+### 2. Gestión de Productos
+- Lista completa de productos
+- Creación y edición manual
+- **Importación masiva desde Google Sheets** (balanza)
+- Filtros por categoría y búsqueda
+
+### 3. Gestión de Pedidos
+- Creación de pedidos con selección de productos
+- Carrito de compras
+- Estados: Pendiente, En Proceso, Listo, Entregado, Cancelado
+- Filtros por estado
+- Sincronización automática con Google Sheets
+
+## 🔐 Seguridad
+
+- Reglas de Firestore configuradas
+- Autenticación requerida para todas las operaciones
+- Control de acceso basado en roles
+- Protección contra auto-asignación de roles privilegiados
+
+## 📊 Integración con Google Sheets
+
+- Importación de productos desde hoja de balanza
+- Exportación automática de pedidos para administración
+- URL de la hoja: [Ver hoja de productos](https://docs.google.com/spreadsheets/d/1Yp2I2jLQM2EwoD6SJxh3LyKy4qtvjcOTpTc1uCzcmgk/edit)
+
+## 🛠️ Desarrollo Local
+
+```bash
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
+npm run dev
+
+# Construir para producción
+npm run build
+
+# Deploy a Firebase
+npx firebase deploy
+```
+
+## 📱 Acceso
+
+La aplicación es **responsive** y funciona en:
+- 💻 Computadoras de escritorio
+- 📱 Teléfonos móviles
+- 📲 Tablets
+
+## 🔗 Enlaces Importantes
+
+- **Aplicación**: https://inventario-insumos-trigales.web.app
+- **Repositorio GitHub**: https://github.com/neptuso/pedidos_lostrigales
+- **Firebase Console**: https://console.firebase.google.com/project/inventario-insumos-trigales
+
+## 📝 Próximos Pasos Sugeridos
+
+1. Realizar pruebas con usuarios reales
+2. Ajustar flujos según feedback
+3. Implementar gestión de clientes (opcional)
+4. Agregar reportes y estadísticas
+5. Configurar notificaciones por email
+
+## 👨‍💻 Desarrollado con
+
+- React 19
+- Vite 7
+- Tailwind CSS 4
+- Firebase 11
+- Google Apps Script
+
+---
+
+**Desarrollado para Los Trigales - 2025**

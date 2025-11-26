@@ -34,6 +34,7 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 
 
 ## Fase 5: Pruebas y Despliegue
-- [ ] Pruebas manuales de flujo completo de pedido.
-- [ ] Corrección de errores.
-- [ ] Despliegue (Deploy) de la aplicación para uso real.
+- [x] Pruebas manuales de flujo completo de pedido.
+- [x] Corrección de errores.
+- [x] Despliegue (Deploy) de la aplicación para uso real.
+- [x] **Aplicación publicada en**: https://inventario-insumos-trigales.web.app

@@ -37,7 +37,14 @@ export function AuthProvider({ children }) {
         isGerente: userProfile?.rol === 'gerente',
         isSucursal: userProfile?.rol === 'sucursal',
         isCliente: userProfile?.rol === 'cliente',
-        isGerenteOrHigher: userProfile?.rol === 'gerente' || userProfile?.rol === 'administrador',
+        isPanadero: userProfile?.rol === 'panadero',
+        isTransportista: userProfile?.rol === 'transportista',
+        isMonitor: userProfile?.rol === 'monitor',
+
+        // Helpers compuestos (Jerarquías o permisos compartidos)
+        isGerenteOrHigher: ['gerente', 'administrador'].includes(userProfile?.rol),
+        canManageOrders: ['administrador', 'gerente', 'panadero', 'transportista'].includes(userProfile?.rol),
+        canViewOrders: ['administrador', 'gerente', 'sucursal', 'cliente', 'panadero', 'transportista', 'monitor'].includes(userProfile?.rol),
     };
 
     return (

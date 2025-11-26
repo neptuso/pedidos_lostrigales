@@ -53,6 +53,19 @@ export default function UserManagement() {
         }
     };
 
+    const getRoleColor = (rol) => {
+        const colors = {
+            administrador: 'bg-purple-100 text-purple-800',
+            gerente: 'bg-blue-100 text-blue-800',
+            sucursal: 'bg-green-100 text-green-800',
+            cliente: 'bg-gray-100 text-gray-800',
+            panadero: 'bg-orange-100 text-orange-800',
+            transportista: 'bg-yellow-100 text-yellow-800',
+            monitor: 'bg-teal-100 text-teal-800'
+        };
+        return colors[rol] || 'bg-gray-100 text-gray-800';
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -137,19 +150,18 @@ export default function UserManagement() {
                                             onChange={(e) => handleRoleChange(user.id, e.target.value)}
                                             disabled={user.id === currentUser.uid} // No puede cambiarse su propio rol
                                             className={`
-                        px-3 py-2 border rounded-lg text-sm font-medium
-                        ${user.id === currentUser.uid ? 'bg-gray-100 cursor-not-allowed' : 'cursor-pointer'}
-                        ${user.rol === 'administrador' ? 'border-purple-300 text-purple-700 bg-purple-50' : ''}
-                        ${user.rol === 'gerente' ? 'border-blue-300 text-blue-700 bg-blue-50' : ''}
-                        ${user.rol === 'sucursal' ? 'border-green-300 text-green-700 bg-green-50' : ''}
-                        ${user.rol === 'cliente' ? 'border-gray-300 text-gray-700 bg-gray-50' : ''}
+                        px-3 py-2 border rounded-lg text-sm font-medium cursor-pointer focus:ring-2 focus:ring-orange-500
+                        ${user.id === currentUser.uid ? 'bg-gray-100 cursor-not-allowed' : ''}
+                        ${getRoleColor(user.rol)}
                       `}
                                         >
-                                            {Object.entries(ROLES).map(([key, value]) => (
-                                                <option key={value} value={value}>
-                                                    {ROLE_LABELS[value]}
-                                                </option>
-                                            ))}
+                                            <option value="cliente">Cliente</option>
+                                            <option value="sucursal">Sucursal</option>
+                                            <option value="gerente">Gerente</option>
+                                            <option value="panadero">Panadero</option>
+                                            <option value="transportista">Transportista</option>
+                                            <option value="monitor">Monitor</option>
+                                            <option value="administrador">Administrador</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -168,10 +180,13 @@ export default function UserManagement() {
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                     <h3 className="text-sm font-semibold text-gray-700 mb-2">Roles del sistema:</h3>
                     <ul className="text-xs text-gray-600 space-y-1">
-                        <li><strong className="text-purple-700">Administrador:</strong> Acceso total al sistema (gestión de usuarios, productos, pedidos)</li>
-                        <li><strong className="text-blue-700">Gerente:</strong> Puede ver reportes y estadísticas generales</li>
-                        <li><strong className="text-green-700">Sucursal:</strong> Puede gestionar pedidos de su zona</li>
-                        <li><strong className="text-gray-700">Cliente:</strong> Puede hacer pedidos y ver su historial</li>
+                        <li><strong className="text-purple-700">Administrador:</strong> Acceso total al sistema.</li>
+                        <li><strong className="text-blue-700">Gerente:</strong> Gestión y reportes.</li>
+                        <li><strong className="text-orange-700">Panadero:</strong> Elaboración y despacho.</li>
+                        <li><strong className="text-yellow-700">Transportista:</strong> Logística y entrega.</li>
+                        <li><strong className="text-green-700">Sucursal:</strong> Gestión de pedidos locales.</li>
+                        <li><strong className="text-teal-700">Monitor:</strong> Solo lectura.</li>
+                        <li><strong className="text-gray-700">Cliente:</strong> Pedidos personales.</li>
                     </ul>
                 </div>
             </div>
