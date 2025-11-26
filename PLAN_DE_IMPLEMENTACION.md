@@ -13,7 +13,7 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 ## Fase 2: Integración de Base de Datos (Firebase)
 - [x] Crear proyecto en Firebase Console.
 - [x] Configurar Firestore (Base de datos NoSQL).
-- [ ] Implementar autenticación básica (si es necesario en esta etapa).
+- [x] **Implementar autenticación básica** (Google + Email/Contraseña con sistema de roles).
 - [x] Conectar la aplicación React con Firebase.
 - [x] **Estrategia Híbrida**: Configurar sincronización de pedidos a Google Sheets (para administración).
 

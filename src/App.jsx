@@ -1,16 +1,33 @@
-import { useState } from 'react'
 import './App.css'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Login from './components/Login'
+import { logout } from './firebase/auth'
 
-function App() {
+function Dashboard() {
+  const { currentUser, userProfile, isAdmin } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <div className="min-h-screen bg-orange-50">
       {/* Barra de Navegación */}
       <nav className="bg-white shadow-md p-4">
         <div className="container mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-orange-800">🍞 Los Trigales</h1>
-          <button className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition">
-            Nuevo Pedido
-          </button>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-700">{userProfile?.displayName}</p>
+              <p className="text-xs text-gray-500 capitalize">{userProfile?.rol}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition text-sm"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -33,41 +50,64 @@ function App() {
             </div>
           </div>
 
-          {/* Área de Pruebas */}
-          <div className="mt-8 p-4 border-t border-gray-200">
-            <button
-              onClick={async () => {
-                const { testConnection } = await import('./testFirebase');
-                const result = await testConnection();
-                if (result.success) alert('¡Conexión a Firebase exitosa! ID: ' + result.id);
-                else alert('Error al conectar: ' + result.error);
-              }}
-              className="text-sm text-gray-500 underline hover:text-orange-600 mr-4"
-            >
-              Probar conexión a Firebase
-            </button>
+          {/* Botones de prueba solo para admins */}
+          {isAdmin && (
+            <div className="mt-8 p-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 mb-2">Área de pruebas (Solo Admin)</p>
+              <button
+                onClick={async () => {
+                  const { testConnection } = await import('./testFirebase');
+                  const result = await testConnection();
+                  if (result.success) alert('¡Conexión a Firebase exitosa! ID: ' + result.id);
+                  else alert('Error al conectar: ' + result.error);
+                }}
+                className="text-sm text-gray-500 underline hover:text-orange-600 mr-4"
+              >
+                Probar conexión a Firebase
+              </button>
 
-            <button
-              onClick={async () => {
-                const { sendOrderToSheets } = await import('./services/sheetsService');
-                const result = await sendOrderToSheets({
-                  id: "TEST-" + Math.floor(Math.random() * 1000),
-                  cliente: "Cliente de Prueba",
-                  total: 1500,
-                  estado: "Pendiente"
-                });
-                if (result.success) alert('¡Datos enviados a Google Sheets! Revisa tu hoja de cálculo.');
-                else alert('Error al enviar a Sheets');
-              }}
-              className="text-sm text-gray-500 underline hover:text-green-600"
-            >
-              Probar conexión a Google Sheets
-            </button>
-          </div>
+              <button
+                onClick={async () => {
+                  const { sendOrderToSheets } = await import('./services/sheetsService');
+                  const result = await sendOrderToSheets({
+                    id: "TEST-" + Math.floor(Math.random() * 1000),
+                    cliente: "Cliente de Prueba",
+                    total: 1500,
+                    estado: "Pendiente"
+                  });
+                  if (result.success) alert('¡Datos enviados a Google Sheets! Revisa tu hoja de cálculo.');
+                  else alert('Error al enviar a Sheets');
+                }}
+                className="text-sm text-gray-500 underline hover:text-green-600"
+              >
+                Probar conexión a Google Sheets
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </div>
-  )
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { currentUser } = useAuth();
+
+  // Si el usuario no está logueado, mostrar pantalla de login
+  if (!currentUser) {
+    return <Login />;
+  }
+
+  // Si está logueado, mostrar dashboard
+  return <Dashboard />;
 }
 
 export default App
