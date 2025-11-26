@@ -20,9 +20,10 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 
 ## Fase 3: Desarrollo de Funcionalidades Principales
 ### Gestión de Productos
-- [ ] Crear modelo de datos para productos (Panes, Facturas, etc.).
-- [ ] Vista de lista de productos.
-- [ ] Formulario para agregar/editar productos.
+- [x] Crear modelo de datos para productos (Panes, Facturas, etc.).
+- [x] Vista de lista de productos.
+- [x] Formulario para agregar/editar productos.
+- [x] Importación masiva desde Google Sheets.
 
 ### Gestión de Clientes
 - [ ] Crear modelo de datos de clientes.
