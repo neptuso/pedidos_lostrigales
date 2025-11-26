@@ -16,6 +16,7 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 - [x] **Implementar autenticación básica** (Google + Email/Contraseña con sistema de roles).
 - [x] Conectar la aplicación React con Firebase.
 - [x] **Estrategia Híbrida**: Configurar sincronización de pedidos a Google Sheets (para administración).
+- [x] **Configurar reglas de seguridad de Firestore** (Control de acceso basado en roles).
 
 ## Fase 3: Desarrollo de Funcionalidades Principales
 ### Gestión de Productos
