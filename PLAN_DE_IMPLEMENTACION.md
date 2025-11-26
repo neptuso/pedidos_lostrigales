@@ -7,14 +7,15 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 - [x] Instalación y configuración de Tailwind CSS para el diseño.
 - [x] Limpieza de archivos de plantilla y creación de estructura básica.
 - [x] Traducción de documentación y comentarios al español.
-- [ ] Gestion y control de versiones con Git.
-- [ ] Configuración del entorno de desarrollo con Node.js y npm.
+- [x] Gestion y control de versiones con Git.
+- [x] Configuración del entorno de desarrollo con Node.js y npm.
 
 ## Fase 2: Integración de Base de Datos (Firebase)
-- [ ] Crear proyecto en Firebase Console.
-- [ ] Configurar Firestore (Base de datos NoSQL).
+- [x] Crear proyecto en Firebase Console.
+- [x] Configurar Firestore (Base de datos NoSQL).
 - [ ] Implementar autenticación básica (si es necesario en esta etapa).
-- [ ] Conectar la aplicación React con Firebase.
+- [x] Conectar la aplicación React con Firebase.
+- [x] **Estrategia Híbrida**: Configurar sincronización de pedidos a Google Sheets (para administración).
 
 ## Fase 3: Desarrollo de Funcionalidades Principales
 ### Gestión de Productos

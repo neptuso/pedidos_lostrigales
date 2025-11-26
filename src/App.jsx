@@ -32,6 +32,38 @@ function App() {
               <p className="text-3xl font-bold text-gray-800">0</p>
             </div>
           </div>
+
+          {/* Área de Pruebas */}
+          <div className="mt-8 p-4 border-t border-gray-200">
+            <button
+              onClick={async () => {
+                const { testConnection } = await import('./testFirebase');
+                const result = await testConnection();
+                if (result.success) alert('¡Conexión a Firebase exitosa! ID: ' + result.id);
+                else alert('Error al conectar: ' + result.error);
+              }}
+              className="text-sm text-gray-500 underline hover:text-orange-600 mr-4"
+            >
+              Probar conexión a Firebase
+            </button>
+
+            <button
+              onClick={async () => {
+                const { sendOrderToSheets } = await import('./services/sheetsService');
+                const result = await sendOrderToSheets({
+                  id: "TEST-" + Math.floor(Math.random() * 1000),
+                  cliente: "Cliente de Prueba",
+                  total: 1500,
+                  estado: "Pendiente"
+                });
+                if (result.success) alert('¡Datos enviados a Google Sheets! Revisa tu hoja de cálculo.');
+                else alert('Error al enviar a Sheets');
+              }}
+              className="text-sm text-gray-500 underline hover:text-green-600"
+            >
+              Probar conexión a Google Sheets
+            </button>
+          </div>
         </div>
       </main>
     </div>
