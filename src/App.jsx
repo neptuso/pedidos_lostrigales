@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Login from './components/Login'
 import UserManagement from './components/UserManagement'
 import ProductManagement from './components/ProductManagement'
+import OrderManagement from './components/OrderManagement'
 import UserProfileDropdown from './components/UserProfileDropdown'
 
 function Dashboard() {
@@ -52,6 +53,16 @@ function Dashboard() {
                 Productos
               </button>
             )}
+
+            <button
+              onClick={() => setCurrentSection('orders')}
+              className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'orders'
+                ? 'bg-orange-600 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              Pedidos
+            </button>
           </div>
 
           {/* Perfil de usuario */}
@@ -122,6 +133,10 @@ function Dashboard() {
 
         {currentSection === 'products' && isGerenteOrHigher && (
           <ProductManagement />
+        )}
+
+        {currentSection === 'orders' && (
+          <OrderManagement />
         )}
       </main>
     </div>
