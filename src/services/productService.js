@@ -14,36 +14,6 @@ export async function createProduct(productData) {
         return { success: true, id: docRef.id };
     } catch (error) {
         console.error('Error creando producto:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Obtener todos los productos
-export async function getAllProducts() {
-    try {
-        const productsCollection = collection(db, 'products');
-        const q = query(productsCollection, orderBy('categoria'), orderBy('descripcion'));
-        const snapshot = await getDocs(q);
-
-        const products = [];
-        snapshot.forEach((doc) => {
-            products.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-
-        return { success: true, products };
-    } catch (error) {
-        console.error('Error obteniendo productos:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Actualizar un producto
-export async function updateProduct(productId, productData) {
-    try {
-        const productRef = doc(db, 'products', productId);
         await updateDoc(productRef, {
             ...productData,
             updatedAt: new Date()
