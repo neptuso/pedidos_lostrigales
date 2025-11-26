@@ -25,20 +25,13 @@ Este documento detalla los pasos para el desarrollo de la aplicación web de ges
 - [x] Formulario para agregar/editar productos.
 - [x] Importación masiva desde Google Sheets.
 
-### Gestión de Clientes
-- [ ] Crear modelo de datos de clientes.
-- [ ] Vista de lista de clientes.
-- [ ] Historial de pedidos por cliente.
-
 ### Gestión de Pedidos
-- [ ] Interfaz para crear un nuevo pedido.
-- [ ] Selección de productos y cálculo de totales.
-- [ ] Estados del pedido (Pendiente, En Proceso, Entregado).
+- [x] Crear modelo de datos de pedidos.
+- [x] Formulario para crear pedidos (selección de productos, cantidades).
+- [x] Vista de lista de pedidos (filtros por estado).
+- [x] Sistema de estados (Pendiente, En Proceso, Listo, Entregado, Cancelado).
+- [x] Sincronización automática con Google Sheets.
 
-## Fase 4: Interfaz de Usuario (UI) y Experiencia (UX)
-- [ ] Mejorar el diseño visual con la paleta de colores de la panadería (Naranjas, Marrones).
-- [ ] Asegurar que la aplicación sea responsiva (funcione en móviles y PC).
-- [ ] Agregar notificaciones visuales (Toasts) para acciones exitosas o errores.
 
 ## Fase 5: Pruebas y Despliegue
 - [ ] Pruebas manuales de flujo completo de pedido.
