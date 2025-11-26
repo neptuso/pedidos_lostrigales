@@ -37,6 +37,7 @@ export function AuthProvider({ children }) {
         isGerente: userProfile?.rol === 'gerente',
         isSucursal: userProfile?.rol === 'sucursal',
         isCliente: userProfile?.rol === 'cliente',
+        isGerenteOrHigher: userProfile?.rol === 'gerente' || userProfile?.rol === 'administrador',
     };
 
     return (

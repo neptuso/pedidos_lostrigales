@@ -3,10 +3,11 @@ import { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import Login from './components/Login'
 import UserManagement from './components/UserManagement'
+import ProductManagement from './components/ProductManagement'
 import UserProfileDropdown from './components/UserProfileDropdown'
 
 function Dashboard() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isGerenteOrHigher } = useAuth();
   const [currentSection, setCurrentSection] = useState('dashboard'); // dashboard, users, products, orders
 
   return (
@@ -21,8 +22,8 @@ function Dashboard() {
             <button
               onClick={() => setCurrentSection('dashboard')}
               className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'dashboard'
-                  ? 'bg-orange-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-orange-600 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
                 } `}
             >
               Inicio
@@ -32,11 +33,23 @@ function Dashboard() {
               <button
                 onClick={() => setCurrentSection('users')}
                 className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'users'
-                    ? 'bg-orange-600 text-white'
-                    : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-orange-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
                   } `}
               >
                 Usuarios
+              </button>
+            )}
+
+            {isGerenteOrHigher && (
+              <button
+                onClick={() => setCurrentSection('products')}
+                className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'products'
+                  ? 'bg-orange-600 text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+                  } `}
+              >
+                Productos
               </button>
             )}
           </div>
@@ -105,6 +118,10 @@ function Dashboard() {
 
         {currentSection === 'users' && isAdmin && (
           <UserManagement />
+        )}
+
+        {currentSection === 'products' && isGerenteOrHigher && (
+          <ProductManagement />
         )}
       </main>
     </div>
