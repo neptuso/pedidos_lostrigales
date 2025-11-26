@@ -50,36 +50,6 @@ export async function getAllOrders() {
         return { success: true, orders };
     } catch (error) {
         console.error('Error obteniendo pedidos:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Obtener pedidos de un usuario específico
-export async function getUserOrders(userId) {
-    try {
-        const ordersCollection = collection(db, 'orders');
-        const q = query(ordersCollection, where('userId', '==', userId), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-
-        const orders = [];
-        snapshot.forEach((doc) => {
-            orders.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-
-        return { success: true, orders };
-    } catch (error) {
-        console.error('Error obteniendo pedidos del usuario:', error);
-        return { success: false, error: error.message };
-    }
-}
-
-// Actualizar estado de un pedido
-export async function updateOrderStatus(orderId, newStatus) {
-    try {
-        const orderRef = doc(db, 'orders', orderId);
         await updateDoc(orderRef, {
             estado: newStatus,
             updatedAt: new Date()
