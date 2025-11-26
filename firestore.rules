@@ -23,18 +23,6 @@ service cloud.firestore {
     function isGerente() {
       return isAuthenticated() && getUserRole() == 'gerente';
     }
-    
-    function isPanadero() {
-      return isAuthenticated() && getUserRole() == 'panadero';
-    }
-    
-    function isTransportista() {
-      return isAuthenticated() && getUserRole() == 'transportista';
-    }
-    
-    function isMonitor() {
-      return isAuthenticated() && getUserRole() == 'monitor';
-    }
 
     function isSucursal() {
       return isAuthenticated() && getUserRole() == 'sucursal';
@@ -74,21 +62,18 @@ service cloud.firestore {
     // 3. Colección de PEDIDOS (Orders)
     match /orders/{orderId} {
       // LECTURA:
-      // - Admin, Gerente, Panadero, Transportista, Monitor: Ven TODO
-      // - Sucursal/Cliente: Solo ven SUS propios pedidos
-      allow read: if isAdmin() || isGerente() || isPanadero() || isTransportista() || isMonitor()
+      // - Admin, Gerente: Ven TODO
+      // - Otros: Solo ven SUS propios pedidos
+      allow read: if isAdmin() || isGerente()
                   || (isAuthenticated() && resource.data.userId == request.auth.uid);
 
       // CREACIÓN:
       // - Admin, Gerente, Sucursal, Cliente: Pueden crear
-      // - Panadero, Transportista, Monitor: NO crean pedidos
-      allow create: if isAdmin() || isGerente() || isSucursal() || isAuthenticated(); // Cliente es default
+      allow create: if isAdmin() || isGerente() || isSucursal() || isAuthenticated();
 
-      // ACTUALIZACIÓN (Cambios de estado):
+      // ACTUALIZACIÓN:
       // - Admin/Gerente: Control total
-      // - Panadero: Puede cambiar estado si está asignado a producción (o lógica futura)
-      // - Transportista: Puede cambiar estado a entregado/en ruta
-      allow update: if isAdmin() || isGerente() || isPanadero() || isTransportista();
+      allow update: if isAdmin() || isGerente();
       
       // ELIMINACIÓN:
       // - Solo Admin

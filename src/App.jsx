@@ -5,7 +5,6 @@ import Login from './components/Login'
 import UserManagement from './components/UserManagement'
 import ProductManagement from './components/ProductManagement'
 import OrderManagement from './components/OrderManagement'
-import BranchManagement from './components/BranchManagement'
 import UserProfileDropdown from './components/UserProfileDropdown'
 
 function Dashboard() {
@@ -30,18 +29,6 @@ function Dashboard() {
             >
               Inicio
             </button>
-
-            {isAdmin && (
-              <button
-                onClick={() => setCurrentSection('branches')}
-                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'branches'
-                  ? 'bg-orange-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-              >
-                Sucursales
-              </button>
-            )}
 
             {isAdmin && (
               <button
@@ -144,9 +131,6 @@ function Dashboard() {
           <UserManagement />
         )}
 
-        {currentSection === 'branches' && isAdmin && (
-          <BranchManagement />
-        )}
 
         {currentSection === 'products' && isGerenteOrHigher && (
           <ProductManagement />
