@@ -38,17 +38,39 @@ export async function updateUserRole(userId, newRole) {
     }
 }
 
+// Actualizar sucursal de un usuario
+export async function updateUserBranch(userId, branchId, branchName) {
+    try {
+        const userRef = doc(db, 'users', userId);
+        await updateDoc(userRef, {
+            branchId: branchId,
+            branchName: branchName, // Guardamos el nombre para evitar lecturas extra
+            updatedAt: new Date()
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Error actualizando sucursal:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 // Roles disponibles
 export const ROLES = {
     CLIENTE: 'cliente',
     SUCURSAL: 'sucursal',
     GERENTE: 'gerente',
-    ADMINISTRADOR: 'administrador'
+    ADMINISTRADOR: 'administrador',
+    PANADERO: 'panadero',
+    TRANSPORTISTA: 'transportista',
+    MONITOR: 'monitor'
 };
 
 export const ROLE_LABELS = {
-    cliente: 'Cliente',
-    sucursal: 'Sucursal',
+    administrador: 'Administrador',
     gerente: 'Gerente',
-    administrador: 'Administrador'
+    sucursal: 'Sucursal',
+    cliente: 'Cliente',
+    panadero: 'Panadero',
+    transportista: 'Transportista',
+    monitor: 'Monitor'
 };
