@@ -1,0 +1,128 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función auxiliar: Verificar si el usuario está autenticado
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Función auxiliar: Verificar si el usuario es el dueño del documento
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // Función auxiliar: Obtener el rol del usuario
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rol;
+    }
+    
+    // Función auxiliar: Verificar si el usuario es administrador
+    function isAdmin() {
+      return isSignedIn() && getUserRole() == 'administrador';
+    }
+    
+    // Función auxiliar: Verificar si el usuario es gerente o superior
+    function isGerenteOrHigher() {
+      return isSignedIn() && getUserRole() in ['gerente', 'administrador'];
+    }
+    
+    // Función auxiliar: Verificar si el usuario es sucursal o superior
+    function isSucursalOrHigher() {
+      return isSignedIn() && getUserRole() in ['sucursal', 'gerente', 'administrador'];
+    }
+    
+    // ============================================
+    // REGLAS PARA COLECCIÓN DE USUARIOS
+    // ============================================
+    match /users/{userId} {
+      // Lectura:
+      // - Los admins pueden ver todos los usuarios
+      // - Cada usuario puede ver su propio perfil
+      // - Gerentes y sucursales pueden ver perfiles de clientes
+      allow read: if isAdmin() || 
+                     isOwner(userId) ||
+                     (isGerenteOrHigher() && get(/databases/$(database)/documents/users/$(userId)).data.rol == 'cliente');
+      
+      // Creación:
+      // - Cualquier usuario autenticado puede crear su propio perfil (registro)
+      // - El perfil debe tener el mismo UID que el usuario autenticado
+      // - El rol por defecto debe ser 'cliente' (excepto si es el admin configurado)
+      allow create: if isSignedIn() && 
+                       request.auth.uid == userId &&
+                       (request.resource.data.rol == 'cliente' || 
+                        request.resource.data.email == 'neptuso@gmail.com');
+      
+      // Actualización:
+      // - Los admins pueden actualizar cualquier usuario (cambiar roles)
+      // - Cada usuario puede actualizar su propio perfil (nombre, foto)
+      // - IMPORTANTE: Los usuarios NO pueden cambiar su propio rol
+      allow update: if isAdmin() ||
+                       (isOwner(userId) && 
+                        request.resource.data.rol == resource.data.rol); // El rol no cambia
+      
+      // Eliminación:
+      // - Solo los admins pueden eliminar usuarios
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================
+    // REGLAS PARA COLECCIÓN DE PRODUCTOS
+    // ============================================
+    match /products/{productId} {
+      // Lectura: Todos los usuarios autenticados pueden ver productos
+      allow read: if isSignedIn();
+      
+      // Creación/Modificación/Eliminación: Solo admins y gerentes
+      allow create, update, delete: if isGerenteOrHigher();
+    }
+    
+    // ============================================
+    // REGLAS PARA COLECCIÓN DE PEDIDOS
+    // ============================================
+    match /orders/{orderId} {
+      // Lectura:
+      // - Admins y gerentes: pueden ver todos los pedidos
+      // - Sucursales: pueden ver pedidos de su zona (si implementamos este campo)
+      // - Clientes: solo pueden ver sus propios pedidos
+      allow read: if isGerenteOrHigher() ||
+                     isSucursalOrHigher() ||
+                     (isSignedIn() && resource.data.userId == request.auth.uid);
+      
+      // Creación:
+      // - Cualquier usuario autenticado puede crear un pedido
+      // - El pedido debe tener su propio userId
+      allow create: if isSignedIn() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Actualización:
+      // - Admins, gerentes y sucursales: pueden actualizar cualquier pedido
+      // - Clientes: solo pueden actualizar sus propios pedidos si el estado es 'pendiente'
+      allow update: if isSucursalOrHigher() ||
+                       (isSignedIn() && 
+                        resource.data.userId == request.auth.uid && 
+                        resource.data.estado == 'pendiente');
+      
+      // Eliminación:
+      // - Solo admins pueden eliminar pedidos
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================
+    // REGLAS PARA COLECCIÓN DE PRUEBA (test_connection)
+    // ============================================
+    match /test_connection/{document=**} {
+      // Solo admins pueden crear documentos de prueba
+      allow read, write: if isAdmin();
+    }
+    
+    // ============================================
+    // DENEGACIÓN POR DEFECTO
+    // ============================================
+    // Cualquier colección que no esté explícitamente definida arriba
+    // será inaccesible (seguridad por defecto)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
