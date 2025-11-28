@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
-import { getAllOrders, getUserOrders, updateOrderStatus, deleteOrder, ORDER_STATES, ORDER_STATE_LABELS } from '../services/orderService';
+import { getAllOrders, getUserOrders, getOrdersForPlant, updateOrderStatus, deleteOrder, ORDER_STATES, ORDER_STATE_LABELS } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
 import NewOrderForm from './NewOrderForm';
 
 export default function OrderManagement() {
-    const { currentUser, isAdmin, isGerenteOrHigher } = useAuth();
+    const { currentUser, userProfile, isAdmin, isGerenteOrHigher } = useAuth();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showNewOrderForm, setShowNewOrderForm] = useState(false);
     const [filterStatus, setFilterStatus] = useState('');
 
+    const isPanadero = userProfile?.rol === 'panadero';
+    const isTransportista = userProfile?.rol === 'transportista';
+
     useEffect(() => {
         loadOrders();
-    }, []);
+    }, [currentUser, userProfile]);
 
     const loadOrders = async () => {
         setLoading(true);
@@ -21,12 +24,30 @@ export default function OrderManagement() {
 
         if (isGerenteOrHigher) {
             result = await getAllOrders();
+        } else if (isPanadero || isTransportista) {
+            // Panaderos y Transportistas ven pedidos de su planta asignada
+            if (userProfile?.branchId) {
+                result = await getOrdersForPlant(userProfile.branchId);
+            } else {
+                result = { success: false, error: 'No tienes una planta asignada.' };
+            }
         } else {
             result = await getUserOrders(currentUser.uid);
         }
 
         if (result.success) {
-            setOrders(result.orders);
+            // Filtrar pedidos relevantes para cada rol operativo
+            let filtered = result.orders;
+
+            if (isPanadero) {
+                // Panaderos ven: Pendientes, En Producción, Listos (para referencia)
+                filtered = result.orders.filter(o => ['pendiente', 'en_produccion', 'listo_despacho'].includes(o.estado));
+            } else if (isTransportista) {
+                // Transportistas ven: Listos para Despacho, En Ruta, Entregados (recientes)
+                filtered = result.orders.filter(o => ['listo_despacho', 'en_ruta', 'entregado'].includes(o.estado));
+            }
+
+            setOrders(filtered);
         } else {
             setError('Error al cargar pedidos: ' + result.error);
         }
@@ -61,8 +82,9 @@ export default function OrderManagement() {
     const getStatusColor = (status) => {
         const colors = {
             pendiente: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-            en_proceso: 'bg-blue-100 text-blue-800 border-blue-300',
-            listo: 'bg-green-100 text-green-800 border-green-300',
+            en_produccion: 'bg-blue-100 text-blue-800 border-blue-300',
+            listo_despacho: 'bg-green-100 text-green-800 border-green-300',
+            en_ruta: 'bg-indigo-100 text-indigo-800 border-indigo-300',
             entregado: 'bg-gray-100 text-gray-800 border-gray-300',
             cancelado: 'bg-red-100 text-red-800 border-red-300'
         };
@@ -147,10 +169,71 @@ export default function OrderManagement() {
                                         {order.clienteTelefono && (
                                             <p className="text-sm text-gray-600">📞 {order.clienteTelefono}</p>
                                         )}
+                                        {order.origenNombre && (
+                                            <p className="text-sm text-blue-600 font-medium mt-1">
+                                                🏭 Planta: {order.origenNombre}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="text-right">
                                         <p className="text-2xl font-bold text-orange-600">${order.total.toFixed(2)}</p>
-                                        {isGerenteOrHigher ? (
+
+                                        {/* Acciones para PANADEROS */}
+                                        {isPanadero && (
+                                            <div className="mt-2 flex flex-col items-end gap-2">
+                                                <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}>
+                                                    {ORDER_STATE_LABELS[order.estado]}
+                                                </span>
+
+                                                {order.estado === 'pendiente' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(order.id, 'en_produccion')}
+                                                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                                                    >
+                                                        Comenzar Producción
+                                                    </button>
+                                                )}
+
+                                                {order.estado === 'en_produccion' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(order.id, 'listo_despacho')}
+                                                        className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition"
+                                                    >
+                                                        Terminar Producción
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Acciones para TRANSPORTISTAS */}
+                                        {isTransportista && (
+                                            <div className="mt-2 flex flex-col items-end gap-2">
+                                                <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}>
+                                                    {ORDER_STATE_LABELS[order.estado]}
+                                                </span>
+
+                                                {order.estado === 'listo_despacho' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(order.id, 'en_ruta')}
+                                                        className="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition flex items-center gap-1"
+                                                    >
+                                                        🚚 Retirar Pedido
+                                                    </button>
+                                                )}
+
+                                                {order.estado === 'en_ruta' && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(order.id, 'entregado')}
+                                                        className="bg-teal-600 text-white px-3 py-1 rounded text-sm hover:bg-teal-700 transition flex items-center gap-1"
+                                                    >
+                                                        ✅ Confirmar Entrega
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Acciones para GERENTES/ADMINS */}
+                                        {isGerenteOrHigher && !isPanadero && !isTransportista && (
                                             <select
                                                 value={order.estado}
                                                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
@@ -162,7 +245,10 @@ export default function OrderManagement() {
                                                     </option>
                                                 ))}
                                             </select>
-                                        ) : (
+                                        )}
+
+                                        {/* Vista para CLIENTES/SUCURSALES (Solo lectura) */}
+                                        {!isPanadero && !isTransportista && !isGerenteOrHigher && (
                                             <span className={`inline-block mt-2 px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}>
                                                 {ORDER_STATE_LABELS[order.estado]}
                                             </span>

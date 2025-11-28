@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 const COLLECTION_NAME = 'branches';
@@ -6,36 +6,28 @@ const COLLECTION_NAME = 'branches';
 // Obtener todas las sucursales
 export async function getAllBranches() {
     try {
-        console.log('🔍 [DEBUG] Iniciando getAllBranches...');
-        console.log('🔍 [DEBUG] db object:', db);
-        console.log('🔍 [DEBUG] Collection name:', COLLECTION_NAME);
+        // Verificar autenticación
+        const { auth } = await import('../firebase/auth');
+        const currentUser = auth.currentUser;
+        console.log('🔐 Usuario actual en getAllBranches:', currentUser?.email || 'NO AUTENTICADO');
 
         const branchesCollection = collection(db, COLLECTION_NAME);
-        console.log('🔍 [DEBUG] branchesCollection:', branchesCollection);
-
-        const q = query(branchesCollection);
-        console.log('🔍 [DEBUG] query:', q);
-
-        const snapshot = await getDocs(q);
-        console.log('🔍 [DEBUG] snapshot recibido:', snapshot);
-        console.log('🔍 [DEBUG] snapshot.size:', snapshot.size);
+        const snapshot = await getDocs(branchesCollection);
 
         const branches = [];
         snapshot.forEach((docSnap) => {
-            console.log('🔍 [DEBUG] Documento encontrado:', docSnap.id, docSnap.data());
             branches.push({
                 id: docSnap.id,
                 ...docSnap.data()
             });
         });
 
-        console.log('🔍 [DEBUG] Total branches:', branches.length);
+        // Ordenar por nombre en el cliente
+        branches.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+
         return { success: true, branches };
     } catch (error) {
-        console.error('❌ [ERROR] Error obteniendo sucursales:', error);
-        console.error('❌ [ERROR] Error code:', error.code);
-        console.error('❌ [ERROR] Error message:', error.message);
-        console.error('❌ [ERROR] Error stack:', error.stack);
+        console.error('Error obteniendo sucursales:', error);
         return { success: false, error: error.message };
     }
 }
@@ -43,7 +35,6 @@ export async function getAllBranches() {
 // Crear una nueva sucursal
 export async function createBranch(branchData) {
     try {
-        console.log('🔍 [DEBUG] Creando sucursal:', branchData);
         const branchesCollection = collection(db, COLLECTION_NAME);
         const newBranch = {
             ...branchData,
@@ -52,11 +43,9 @@ export async function createBranch(branchData) {
         };
 
         const docRef = await addDoc(branchesCollection, newBranch);
-        console.log('✅ [DEBUG] Sucursal creada con ID:', docRef.id);
         return { success: true, id: docRef.id };
     } catch (error) {
-        console.error('❌ [ERROR] Error creando sucursal:', error);
-        console.error('❌ [ERROR] Error code:', error.code);
+        console.error('Error creando sucursal:', error);
         return { success: false, error: error.message };
     }
 }

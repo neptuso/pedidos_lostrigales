@@ -113,18 +113,51 @@ export async function deleteOrder(orderId) {
 }
 
 // Estados posibles
+// Obtener pedidos por planta de producción (para Panaderos)
+export async function getOrdersForPlant(plantId) {
+    try {
+        const ordersCollection = collection(db, 'orders');
+        // Filtramos por el campo 'origenId' que guardamos en el pedido
+        const q = query(ordersCollection, where('origenId', '==', plantId));
+        const snapshot = await getDocs(q);
+
+        const orders = [];
+        snapshot.forEach((doc) => {
+            orders.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Ordenar por fecha (más recientes primero)
+        orders.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            return dateB - dateA;
+        });
+
+        return { success: true, orders };
+    } catch (error) {
+        console.error('Error obteniendo pedidos de planta:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+// Estados posibles
 export const ORDER_STATES = {
     PENDIENTE: 'pendiente',
-    EN_PROCESO: 'en_proceso',
-    LISTO: 'listo',
+    EN_PRODUCCION: 'en_produccion',
+    LISTO_DESPACHO: 'listo_despacho',
+    EN_RUTA: 'en_ruta',
     ENTREGADO: 'entregado',
     CANCELADO: 'cancelado'
 };
 
 export const ORDER_STATE_LABELS = {
     pendiente: 'Pendiente',
-    en_proceso: 'En Proceso',
-    listo: 'Listo',
+    en_produccion: 'En Producción',
+    listo_despacho: 'Listo para Despacho',
+    en_ruta: 'En Ruta',
     entregado: 'Entregado',
     cancelado: 'Cancelado'
 };
