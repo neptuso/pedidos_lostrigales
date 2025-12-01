@@ -79,6 +79,86 @@ export default function OrderManagement() {
         loadOrders();
     };
 
+    const printOrderTicket = (order) => {
+        const printWindow = window.open('', '_blank', 'width=600,height=600');
+        if (!printWindow) {
+            alert('Por favor, permite las ventanas emergentes para imprimir.');
+            return;
+        }
+
+        const ticketContent = `
+            <html>
+            <head>
+                <title>Comanda #${order.id.slice(-6)}</title>
+                <style>
+                    body { font-family: 'Courier New', monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
+                    .header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+                    .title { font-size: 24px; font-weight: bold; margin: 0; }
+                    .meta { font-size: 14px; margin-bottom: 5px; }
+                    .items { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                    .items th { text-align: left; border-bottom: 1px solid #000; }
+                    .items td { padding: 5px 0; }
+                    .qty { font-weight: bold; font-size: 18px; width: 40px; }
+                    .desc { font-size: 16px; }
+                    .total { text-align: right; font-size: 18px; font-weight: bold; margin-top: 15px; border-top: 1px solid #000; padding-top: 5px; }
+                    .notes { margin-top: 15px; font-style: italic; background: #eee; padding: 5px; }
+                    .footer { text-align: center; margin-top: 20px; font-size: 12px; }
+                    @media print {
+                        .no-print { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1 class="title">LOS TRIGALES</h1>
+                    <p class="meta">Comanda de Producción</p>
+                    <p class="meta">📅 ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</p>
+                </div>
+                
+                <div>
+                    <p><strong>Pedido:</strong> #${order.id.slice(-6)}</p>
+                    <p><strong>Cliente:</strong> ${order.clienteNombre}</p>
+                    ${order.origenNombre ? `<p><strong>Planta:</strong> ${order.origenNombre}</p>` : ''}
+                </div>
+
+                <table class="items">
+                    <thead>
+                        <tr>
+                            <th>Cant</th>
+                            <th>Producto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${order.items.map(item => `
+                            <tr>
+                                <td class="qty">${item.cantidad}</td>
+                                <td class="desc">${item.descripcion}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                ${order.observaciones ? `
+                    <div class="notes">
+                        <strong>⚠️ Nota:</strong> ${order.observaciones}
+                    </div>
+                ` : ''}
+
+                <div class="footer">
+                    <p>--- Fin del Ticket ---</p>
+                </div>
+
+                <script>
+                    window.onload = function() { window.print(); }
+                </script>
+            </body>
+            </html>
+        `;
+
+        printWindow.document.write(ticketContent);
+        printWindow.document.close();
+    };
+
     const getStatusColor = (status) => {
         const colors = {
             pendiente: 'bg-yellow-100 text-yellow-800 border-yellow-300',
@@ -156,7 +236,16 @@ export default function OrderManagement() {
                             <div key={order.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <h3 className="font-semibold text-lg text-gray-800">{order.clienteNombre}</h3>
+                                        <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
+                                            {order.clienteNombre}
+                                            <button
+                                                onClick={() => printOrderTicket(order)}
+                                                className="text-gray-400 hover:text-gray-700 transition"
+                                                title="Imprimir Comanda"
+                                            >
+                                                🖨️
+                                            </button>
+                                        </h3>
                                         <p className="text-sm text-gray-500">
                                             {order.createdAt?.toDate?.().toLocaleDateString('es-AR', {
                                                 day: '2-digit',

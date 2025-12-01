@@ -1,40 +1,39 @@
 # Plan de Implementación - Sistema de Pedidos "Los Trigales"
 
-Este documento detalla los pasos para el desarrollo de la aplicación web de gestión de pedidos para la panadería "Los Trigales".
+Este documento detalla los pasos para el desarrollo y evolución de la aplicación web de gestión de pedidos.
 
-## Fase 1: Configuración Inicial y Estructura (Actual)
+## ✅ Fase 1: Configuración Inicial y Estructura
 - [x] Inicialización del proyecto con React y Vite.
-- [x] Instalación y configuración de Tailwind CSS para el diseño.
-- [x] Limpieza de archivos de plantilla y creación de estructura básica.
-- [x] Traducción de documentación y comentarios al español.
-- [x] Gestion y control de versiones con Git.
-- [x] Configuración del entorno de desarrollo con Node.js y npm.
+- [x] Instalación y configuración de Tailwind CSS.
+- [x] Configuración de Git y entorno de desarrollo.
 
-## Fase 2: Integración de Base de Datos (Firebase)
-- [x] Crear proyecto en Firebase Console.
-- [x] Configurar Firestore (Base de datos NoSQL).
-- [x] **Implementar autenticación básica** (Google + Email/Contraseña con sistema de roles).
-- [x] Conectar la aplicación React con Firebase.
-- [x] **Estrategia Híbrida**: Configurar sincronización de pedidos a Google Sheets (para administración).
-- [x] **Configurar reglas de seguridad de Firestore** (Control de acceso basado en roles).
+## ✅ Fase 2: Integración de Firebase y Seguridad
+- [x] Configurar Firestore y Authentication.
+- [x] Implementar sistema de roles (Admin, Gerente, Sucursal, Panadero, Transportista).
+- [x] **Reglas de Seguridad**: Configurar `firestore.rules` para proteger datos según rol.
+- [x] **Gestión de Sucursales**: CRUD de sucursales con distinción de Plantas de Producción.
+- [x] **Gestión de Usuarios**: Asignación de usuarios a sucursales específicas.
 
-## Fase 3: Desarrollo de Funcionalidades Principales
+## ✅ Fase 3: Funcionalidades Principales (Core)
 ### Gestión de Productos
-- [x] Crear modelo de datos para productos (Panes, Facturas, etc.).
-- [x] Vista de lista de productos.
-- [x] Formulario para agregar/editar productos.
+- [x] CRUD de productos.
 - [x] Importación masiva desde Google Sheets.
 
 ### Gestión de Pedidos
-- [x] Crear modelo de datos de pedidos.
-- [x] Formulario para crear pedidos (selección de productos, cantidades).
-- [x] Vista de lista de pedidos (filtros por estado).
-- [x] Sistema de estados (Pendiente, En Proceso, Listo, Entregado, Cancelado).
-- [x] Sincronización automática con Google Sheets.
+- [x] Formulario de pedido con lógica de Origen (Planta) y Destino (Sucursal).
+- [x] Vista de lista de pedidos con filtros.
+- [x] **Flujo Operativo**:
+    - [x] **Panadero**: Ver pedidos de su planta, "Comenzar Producción", "Terminar".
+    - [x] **Transportista**: Ver pedidos listos, "Retirar", "Confirmar Entrega".
+- [x] Visualización de Planta de Producción en tarjetas de pedido.
 
+## 🚧 Fase 4: Experiencia de Usuario y Pulido (EN PROGRESO)
+- [ ] **Pie de Página (Footer)**: Versión, Copyright, Desarrollador.
+- [ ] **Impresión de Comandas**: Generar vista PDF/Imprimible para cocina.
+- [ ] **Dashboard**: Métricas simples (Pedidos del día, Totales).
+- [ ] **Historial de Estados**: Registro de quién y cuándo cambió cada estado.
+- [ ] **Notificaciones**: (Opcional) Avisos visuales o por email al cambiar estado.
 
-## Fase 5: Pruebas y Despliegue
-- [x] Pruebas manuales de flujo completo de pedido.
-- [x] Corrección de errores.
-- [x] Despliegue (Deploy) de la aplicación para uso real.
-- [x] **Aplicación publicada en**: https://inventario-insumos-trigales.web.app
+## Fase 5: Mantenimiento y Despliegue
+- [x] Despliegue inicial en Firebase Hosting.
+- [ ] Actualización continua del despliegue con nuevas funcionalidades.

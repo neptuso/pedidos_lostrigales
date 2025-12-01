@@ -7,13 +7,14 @@ import ProductManagement from './components/ProductManagement'
 import OrderManagement from './components/OrderManagement'
 import BranchManagement from './components/BranchManagement'
 import UserProfileDropdown from './components/UserProfileDropdown'
+import Footer from './components/Footer'
 
 function Dashboard() {
   const { isAdmin, isGerenteOrHigher } = useAuth();
   const [currentSection, setCurrentSection] = useState('dashboard'); // dashboard, users, products, orders
 
   return (
-    <div className="min-h-screen bg-orange-50">
+    <div className="min-h-screen bg-orange-50 flex flex-col">
       {/* Barra de Navegación */}
       <nav className="bg-white shadow-md p-4">
         <div className="container mx-auto flex justify-between items-center">
@@ -23,7 +24,7 @@ function Dashboard() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentSection('dashboard')}
-              className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'dashboard'
+              className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'dashboard'
                 ? 'bg-orange-600 text-white'
                 : 'text-gray-700 hover:bg-gray-100'
                 } `}
@@ -46,7 +47,7 @@ function Dashboard() {
             {isAdmin && (
               <button
                 onClick={() => setCurrentSection('users')}
-                className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'users'
+                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'users'
                   ? 'bg-orange-600 text-white'
                   : 'text-gray-700 hover:bg-gray-100'
                   } `}
@@ -58,7 +59,7 @@ function Dashboard() {
             {isGerenteOrHigher && (
               <button
                 onClick={() => setCurrentSection('products')}
-                className={`px - 4 py - 2 rounded - lg transition text - sm font - medium ${currentSection === 'products'
+                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'products'
                   ? 'bg-orange-600 text-white'
                   : 'text-gray-700 hover:bg-gray-100'
                   } `}
@@ -84,7 +85,7 @@ function Dashboard() {
       </nav>
 
       {/* Contenido Principal */}
-      <main className="container mx-auto p-6">
+      <main className="container mx-auto p-6 flex-grow">
         {currentSection === 'dashboard' && (
           <div className="bg-white rounded-xl shadow-lg p-8 text-center max-w-2xl mx-auto mt-10">
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Bienvenido al Sistema de Pedidos</h2>
@@ -156,6 +157,8 @@ function Dashboard() {
           <OrderManagement />
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }
