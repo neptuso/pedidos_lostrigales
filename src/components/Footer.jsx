@@ -11,7 +11,7 @@ export default function Footer() {
 
                     {/* Izquierda: Copyright y Empresa */}
                     <div className="text-center md:text-left">
-                        <p>&copy; {currentYear} <span className="font-semibold text-gray-700">Los Trigales</span>. Todos los derechos reservados.</p>
+                        <p>&copy; {currentYear} <span className="font-semibold text-gray-700">para Los Trigales desarrolla Ceibal Sistemas</span>. Todos los derechos reservados.</p>
                         <p className="text-xs mt-1">Sistema de Gestión de Pedidos</p>
                     </div>
 
