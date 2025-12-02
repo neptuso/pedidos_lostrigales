@@ -189,11 +189,11 @@ export default function OrderManagement() {
     return (
         <div className="max-w-7xl mx-auto p-6">
             <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <h2 className="text-2xl font-bold text-gray-800">Gestión de Pedidos</h2>
                     <button
                         onClick={() => setShowNewOrderForm(!showNewOrderForm)}
-                        className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
+                        className="w-full md:w-auto bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
                     >
                         {showNewOrderForm ? 'Cancelar' : '+ Nuevo Pedido'}
                     </button>
@@ -237,7 +237,7 @@ export default function OrderManagement() {
                     <div className="space-y-4">
                         {filteredOrders.map((order) => (
                             <div key={order.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
-                                <div className="flex justify-between items-start mb-3">
+                                <div className="flex flex-col md:flex-row justify-between items-start mb-3 gap-4">
                                     <div>
                                         <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
                                             {order.clienteNombre}
@@ -267,12 +267,12 @@ export default function OrderManagement() {
                                             </p>
                                         )}
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-left md:text-right w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0">
                                         <p className="text-2xl font-bold text-orange-600">${order.total.toFixed(2)}</p>
 
                                         {/* Acciones para PANADEROS */}
                                         {isPanadero && (
-                                            <div className="mt-2 flex flex-col items-end gap-2">
+                                            <div className="mt-2 flex flex-col items-start md:items-end gap-2">
                                                 <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}>
                                                     {ORDER_STATE_LABELS[order.estado]}
                                                 </span>
@@ -299,7 +299,7 @@ export default function OrderManagement() {
 
                                         {/* Acciones para TRANSPORTISTAS */}
                                         {isTransportista && (
-                                            <div className="mt-2 flex flex-col items-end gap-2">
+                                            <div className="mt-2 flex flex-col items-start md:items-end gap-2 w-full md:w-auto">
                                                 <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}>
                                                     {ORDER_STATE_LABELS[order.estado]}
                                                 </span>
@@ -307,7 +307,7 @@ export default function OrderManagement() {
                                                 {order.estado === 'listo_despacho' && (
                                                     <button
                                                         onClick={() => handleStatusChange(order.id, 'en_ruta')}
-                                                        className="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition flex items-center gap-1"
+                                                        className="w-full md:w-auto bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition flex justify-center md:justify-start items-center gap-1"
                                                     >
                                                         🚚 Retirar Pedido
                                                     </button>
@@ -316,7 +316,7 @@ export default function OrderManagement() {
                                                 {order.estado === 'en_ruta' && (
                                                     <button
                                                         onClick={() => handleStatusChange(order.id, 'entregado')}
-                                                        className="bg-teal-600 text-white px-3 py-1 rounded text-sm hover:bg-teal-700 transition flex items-center gap-1"
+                                                        className="w-full md:w-auto bg-teal-600 text-white px-3 py-1 rounded text-sm hover:bg-teal-700 transition flex justify-center md:justify-start items-center gap-1"
                                                     >
                                                         ✅ Confirmar Entrega
                                                     </button>
@@ -326,17 +326,19 @@ export default function OrderManagement() {
 
                                         {/* Acciones para GERENTES/ADMINS */}
                                         {isGerenteOrHigher && !isPanadero && !isTransportista && (
-                                            <select
-                                                value={order.estado}
-                                                onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                                className={`mt-2 px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}
-                                            >
-                                                {Object.entries(ORDER_STATES).map(([key, value]) => (
-                                                    <option key={value} value={value}>
-                                                        {ORDER_STATE_LABELS[value]}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="mt-2 flex flex-col items-start md:items-end w-full md:w-auto">
+                                                <select
+                                                    value={order.estado}
+                                                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                                    className={`w-full md:w-auto px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(order.estado)}`}
+                                                >
+                                                    {Object.entries(ORDER_STATES).map(([key, value]) => (
+                                                        <option key={value} value={value}>
+                                                            {ORDER_STATE_LABELS[value]}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         )}
 
                                         {/* Vista para CLIENTES/SUCURSALES (Solo lectura) */}

@@ -20,6 +20,7 @@ function Dashboard() {
     pendingByPlant: {},
     pendingPrivateClients: 0
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Roles que pueden ver el Dashboard de Métricas
   const canViewDashboardMetrics = isAdmin || isGerente || isMonitor;
@@ -40,71 +41,108 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-orange-50 flex flex-col">
       {/* Barra de Navegación */}
-      <nav className="bg-white shadow-md p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-orange-800">🍞 Los Trigales</h1>
+      <nav className="bg-white shadow-md p-4 sticky top-0 z-50">
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-orange-800 flex items-center gap-2">
+              <span>🍞</span>
+              <span className="hidden sm:inline">Los Trigales</span>
+              <span className="sm:hidden">Trigales</span>
+            </h1>
 
-          {/* Menú de navegación */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentSection('dashboard')}
-              className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'dashboard'
-                ? 'bg-orange-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-                } `}
-            >
-              Inicio
-            </button>
+            {/* Menú Desktop */}
+            <div className="hidden md:flex items-center gap-2">
+              <NavButton
+                label="Inicio"
+                active={currentSection === 'dashboard'}
+                onClick={() => setCurrentSection('dashboard')}
+              />
 
-            {isAdmin && (
+              {isAdmin && (
+                <NavButton
+                  label="Sucursales"
+                  active={currentSection === 'branches'}
+                  onClick={() => setCurrentSection('branches')}
+                />
+              )}
+
+              {isAdmin && (
+                <NavButton
+                  label="Usuarios"
+                  active={currentSection === 'users'}
+                  onClick={() => setCurrentSection('users')}
+                />
+              )}
+
+              {isGerenteOrHigher && (
+                <NavButton
+                  label="Productos"
+                  active={currentSection === 'products'}
+                  onClick={() => setCurrentSection('products')}
+                />
+              )}
+
+              <NavButton
+                label="Pedidos"
+                active={currentSection === 'orders'}
+                onClick={() => setCurrentSection('orders')}
+              />
+            </div>
+
+            {/* Perfil y Menú Móvil */}
+            <div className="flex items-center gap-3">
+              <UserProfileDropdown />
+
+              {/* Botón Hamburguesa */}
               <button
-                onClick={() => setCurrentSection('branches')}
-                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'branches'
-                  ? 'bg-orange-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  }`}
+                className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                Sucursales
+                <span className="text-2xl">{isMenuOpen ? '✕' : '☰'}</span>
               </button>
-            )}
-
-            {isAdmin && (
-              <button
-                onClick={() => setCurrentSection('users')}
-                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'users'
-                  ? 'bg-orange-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  } `}
-              >
-                Usuarios
-              </button>
-            )}
-
-            {isGerenteOrHigher && (
-              <button
-                onClick={() => setCurrentSection('products')}
-                className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'products'
-                  ? 'bg-orange-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-                  } `}
-              >
-                Productos
-              </button>
-            )}
-
-            <button
-              onClick={() => setCurrentSection('orders')}
-              className={`px-4 py-2 rounded-lg transition text-sm font-medium ${currentSection === 'orders'
-                ? 'bg-orange-600 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-                }`}
-            >
-              Pedidos
-            </button>
+            </div>
           </div>
 
-          {/* Perfil de usuario */}
-          <UserProfileDropdown />
+          {/* Menú Móvil Desplegable */}
+          {isMenuOpen && (
+            <div className="md:hidden mt-4 pb-2 border-t border-gray-100 flex flex-col gap-2 pt-4">
+              <MobileNavButton
+                label="Inicio"
+                active={currentSection === 'dashboard'}
+                onClick={() => { setCurrentSection('dashboard'); setIsMenuOpen(false); }}
+              />
+
+              {isAdmin && (
+                <MobileNavButton
+                  label="Sucursales"
+                  active={currentSection === 'branches'}
+                  onClick={() => { setCurrentSection('branches'); setIsMenuOpen(false); }}
+                />
+              )}
+
+              {isAdmin && (
+                <MobileNavButton
+                  label="Usuarios"
+                  active={currentSection === 'users'}
+                  onClick={() => { setCurrentSection('users'); setIsMenuOpen(false); }}
+                />
+              )}
+
+              {isGerenteOrHigher && (
+                <MobileNavButton
+                  label="Productos"
+                  active={currentSection === 'products'}
+                  onClick={() => { setCurrentSection('products'); setIsMenuOpen(false); }}
+                />
+              )}
+
+              <MobileNavButton
+                label="Pedidos"
+                active={currentSection === 'orders'}
+                onClick={() => { setCurrentSection('orders'); setIsMenuOpen(false); }}
+              />
+            </div>
+          )}
         </div>
       </nav>
 
@@ -268,6 +306,35 @@ function AppContent() {
 
   // Si está logueado, mostrar dashboard
   return <Dashboard />;
+}
+
+// Componentes auxiliares de navegación
+function NavButton({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-lg transition text-sm font-medium ${active
+        ? 'bg-orange-600 text-white'
+        : 'text-gray-700 hover:bg-gray-100'
+        }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function MobileNavButton({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left px-4 py-3 rounded-lg transition font-medium ${active
+        ? 'bg-orange-50 text-orange-700 border-l-4 border-orange-600'
+        : 'text-gray-600 hover:bg-gray-50'
+        }`}
+    >
+      {label}
+    </button>
+  );
 }
 
 export default App
