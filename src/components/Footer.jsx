@@ -24,8 +24,8 @@ export default function Footer() {
 
                     {/* Derecha: Desarrollador */}
                     <div className="text-center md:text-right">
-                        <p>Desarrollado con ❤️ y ☕</p>
-                        <p className="text-xs mt-1">Soporte: sistemas@lostrigales.com</p>
+                        <p>Desarrollado con <span role="img" aria-label="mate">🧉</span>  y con ❤️  </p>
+                        <p className="text-xs mt-1">Soporte: neptuso@gmail.com</p>
                     </div>
                 </div>
             </div>

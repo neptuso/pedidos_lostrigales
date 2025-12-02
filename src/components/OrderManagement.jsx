@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllOrders, getUserOrders, getOrdersForPlant, updateOrderStatus, deleteOrder, ORDER_STATES, ORDER_STATE_LABELS } from '../services/orderService';
+import { getAllOrders, getUserOrders, getOrdersForPlant, getOrdersForTransport, updateOrderStatus, deleteOrder, ORDER_STATES, ORDER_STATE_LABELS } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
 import NewOrderForm from './NewOrderForm';
 
@@ -24,8 +24,11 @@ export default function OrderManagement() {
 
         if (isGerenteOrHigher) {
             result = await getAllOrders();
-        } else if (isPanadero || isTransportista) {
-            // Panaderos y Transportistas ven pedidos de su planta asignada
+        } else if (isTransportista) {
+            // Transportistas ven TODOS los pedidos listos/en ruta (Globales)
+            result = await getOrdersForTransport();
+        } else if (isPanadero) {
+            // Panaderos ven pedidos de su planta asignada
             if (userProfile?.branchId) {
                 result = await getOrdersForPlant(userProfile.branchId);
             } else {

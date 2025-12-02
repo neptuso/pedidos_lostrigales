@@ -143,6 +143,36 @@ export async function getOrdersForPlant(plantId) {
     }
 }
 
+// Obtener pedidos para Transportistas (Globales - Sin filtro de planta)
+export async function getOrdersForTransport() {
+    try {
+        const ordersCollection = collection(db, 'orders');
+        // Traemos pedidos listos para retirar o en ruta
+        const q = query(ordersCollection, where('estado', 'in', ['listo_despacho', 'en_ruta', 'entregado']));
+        const snapshot = await getDocs(q);
+
+        const orders = [];
+        snapshot.forEach((doc) => {
+            orders.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Ordenar por fecha (más recientes primero)
+        orders.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            return dateB - dateA;
+        });
+
+        return { success: true, orders };
+    } catch (error) {
+        console.error('Error obteniendo pedidos para transporte:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 // Estados posibles
 export const ORDER_STATES = {
     PENDIENTE: 'pendiente',
